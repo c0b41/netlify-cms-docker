@@ -1,0 +1,7 @@
+*
+!src
+!static
+!package.json
+!yarn.lock
+!gatsby-config.js
+!gatsby-node.js
