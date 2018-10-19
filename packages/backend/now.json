@@ -3,5 +3,11 @@
     "type": "docker",
     "features": {
         "cloud": "v2"
+    },
+    "alias": [
+        "netlify-cms-backend.now.sh"
+    ],
+    "env": {
+        "HOST": "netlify-cms-backend.now.sh"
     }
 }

@@ -1,13 +1,18 @@
-FROM alpine:3.7 as build
+FROM golang:1.9-alpine as base
+ENV GOBIN /go/bin
+ARG HOST
 
-RUN apk --update add curl bash
-WORKDIR /usr/src
+RUN apk add --no-cache git 
 
-ENV PORT 3000
-EXPOSE 3000
+RUN mkdir /go/src/app
+ADD . /go/src/app
+WORKDIR /go/src/app
 
-ENV NETLIFY_CMS_BACKEND_VERSION 1.0.0
-ENV NETLIFY_CMS_BACKEND https://github.com/c0b41/netlify-cms-oauth-backend/releases/download/v${NETLIFY_CMS_BACKEND_VERSION}/netlify-cms-oauth-backend_linux_amd64
-RUN curl -fsSL ${NETLIFY_CMS_BACKEND} -o netlify-cms-backend
+RUN go get -u github.com/golang/dep/...
+RUN dep ensure
+RUN CGO_ENABLED=0 go build -ldflags "-s -w" -o main
 
-#CMD ["./netlify-cms-backend"]
+
+FROM scratch
+COPY --from=base /go/src/app/main /netlify-cms-backend
+CMD ["/netlify-cms-backend"]
